@@ -54,7 +54,7 @@ function Hero() {
                 loop
                 muted
                 src={getVideoSrc(upcomingVideoIndex)}
-                // ref={nextVideoRef}
+                ref={nextVideoRef}
                 className=" size-64 origin-center scale-150 object-cover object-center"
                 onLoadedData={handleVideoLoad}
               />
@@ -80,7 +80,7 @@ function Hero() {
             )}
             loop
             muted
-            autoPlay
+            // autoPlay
             className="absolute left-0 top-0 size-full object-cover object-center"
             onLoadedData={handleVideoLoad}
           />
