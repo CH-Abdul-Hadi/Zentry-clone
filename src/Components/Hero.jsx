@@ -1,6 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import { TiLocationArrow } from "react-icons/ti";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 function Hero() {
   // kon si video chal rahi hai
@@ -11,8 +16,8 @@ function Hero() {
   const [isLoading, setIsLoading] = useState(true);
   // kitni video load ho gi hai
   const [loadedVideos, setLoadedVideos] = useState(0);
-  //  number of videos hai
-  const totalVideos = 3;
+  // number of videos hai
+  const totalVideos = 4;
   // no idea
   const nextVideoRef = useRef(null);
   // calculate which video index will play
@@ -31,16 +36,78 @@ function Hero() {
   // make the video src
   const getVideoSrc = (index) => `videos/hero-${index}.mp4`;
 
+  // for loaded videos
+  useEffect(() => {
+    if (loadedVideos === totalVideos) {
+      setIsLoading(false);
+    }
+  }, [loadedVideos]);
+
+  // use of Gsap
+  useGSAP(
+    () => {
+      if (HasClicked) {
+        gsap.set("#next-video", { visibility: "visible" });
+
+        gsap.to("#next-video", {
+          transformOrigin: "center center",
+          scale: 1,
+          width: "100%",
+          height: "100%",
+          duration: 1,
+          ease: "power1.inOut",
+          onStart: () => nextVideoRef.current.play(),
+        });
+        gsap.from("#current-video", {
+          transformOrigin: "center center",
+          scale: 0,
+          duration: 1,
+          ease: "power1.inOut",
+        });
+      }
+    },
+    { dependencies: [currentIndex], revertOnUpdate: true }
+  );
+
+  useGSAP(() => {
+    gsap.set("#video-frame", {
+      clipPath: "polygon(14% 0%, 72% 0%, 90% 90%, 0% 100%)",
+      borderRadius: "0 0 40% 10%",
+    });
+
+    gsap.from("#video-frame", {
+      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+      borderRadius: "0% 0% 0% 0%",
+      ease: "power1.inOut",
+      scrollTrigger: {
+        trigger: "#video-frame",
+        start: "center center",
+        end: "bottom center",
+        scrub: true,
+      },
+    });
+  });
+
   return (
     <div className=" relative h-dvh w-screen overflow-x-hidden ">
+      {isLoading && (
+        <div className="flex-center absolute-center z-[100] overflow-hidden w-screen h-dvh">
+          <div className="three-body">
+            <div className="three-body__dot"></div>
+            <div className="three-body__dot"></div>
+            <div className="three-body__dot"></div>
+          </div>
+        </div>
+      )}
+
       <div
         className=" relative z-10 h-dvh w-screen 
       overflow-hidden rounded-lg bg-blue-75"
+        id="video-frame"
       >
         <div>
           {/* video ka div hai */}
           <div
-            id="video-frame"
             className="mask-clip-path absolute-center z-50 absolute 
             size-64 cursor-pointer overflow-hidden rounded-lg"
           >
@@ -60,8 +127,8 @@ function Hero() {
               />
             </div>
           </div>
-          {/* no idea */}
-          {/*Renders the current video, but it’s invisible (no idea ) */}
+
+          {/*Renders the current video, added gasp effect */}
           <video
             loop
             muted
@@ -71,7 +138,6 @@ function Hero() {
             src={getVideoSrc(currentIndex)}
             onLoadedData={handleVideoLoad}
           />
-          {/* no idea */}
 
           {/* background video hai */}
           <video
@@ -80,13 +146,13 @@ function Hero() {
             )}
             loop
             muted
-            // autoPlay
-            className="absolute left-0 top-0 size-full object-cover object-center"
+            autoPlay
+            className="absolute left-0 top-0 size-full object-cover object-center "
             onLoadedData={handleVideoLoad}
           />
         </div>
         {/* upper wali heading hai  */}
-        <div className=" absolute left-0 top-0 z-40 size-full">
+        <div className=" absolute left-0 top-0 z-40 size-full ">
           <div className="mt-24 px-5 sm:px-10">
             <h1 className="special-font hero-heading text-blue-100">
               redefi<b>n</b>e
