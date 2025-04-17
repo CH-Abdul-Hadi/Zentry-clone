@@ -38,7 +38,7 @@ function Hero() {
 
   // for loaded videos
   useEffect(() => {
-    if (loadedVideos === totalVideos) {
+    if (loadedVideos === totalVideos-1) {
       setIsLoading(false);
     }
   }, [loadedVideos]);
@@ -90,9 +90,10 @@ function Hero() {
 
   return (
     <div className=" relative h-dvh w-screen overflow-x-hidden ">
+      
       {isLoading && (
-        <div className="flex-center absolute-center z-[100] overflow-hidden w-screen h-dvh">
-          <div className="three-body">
+        <div className="flex-center absolute-center z-[100] overflow-hidden w-screen h-dvh bg-[#dfdff0]">
+          <div className="three-body ">
             <div className="three-body__dot"></div>
             <div className="three-body__dot"></div>
             <div className="three-body__dot"></div>
